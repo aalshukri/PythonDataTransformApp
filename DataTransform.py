@@ -19,4 +19,27 @@ class DataTransform(object):
 	pass
 
 
+	"""
+	" Constructor
+	"""
+	#def __init__(self):
+	#/contructor
+
+
+	"""
+	" test method
+	"""
+	def test(self):
+		'test method'
+		print("test")
+
+
+"""
+" Runs this class
+"
+"""
+if __name__ == '__main__':
+	dt = DataTransform()
+	dt.test()
+
 
