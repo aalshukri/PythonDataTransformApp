@@ -1,30 +1,38 @@
 #
-# DataTransform
+# Data Transform Application
 #
 # @created 2017-05-10 11:56:12 
 # @version 0.01 (beta)
-# @author 
-# @email 
+# @author aalshukri
+# @email -
 #
-# PythonDataTransformApp
-#	Converts long-form data to wide-form data
-#
-# 	Assumes that input is sorted by idColumn.
-#		This assumption allows for large data sets to be processed
-#		without loading entire file into memory for sorting.
-#		[Could use indexing as pre-processing step]
-#
-# How does this application work?
 """
+PythonDataTransformApp
+
+Converts long-form data to wide-form data
+
+Assumes that input is sorted by idColumn.
+This assumption allows for large data sets to be processed
+without loading entire file into memory for sorting.
+
+Input params:
+* longFormFileName - the csv filename of the long form data file.
+* wideFormFileName - the csv filename of the output wide form data file.
+* idColumn	   - column which contains the id to segments users.	
+* staticColumns	   - colunms which stays the same for each row.
+* ignoreColumns	   - columns to ignore when transforming to wide form.
+		
+
+How to run:
+> python DataTransform.py [] [] []
+
 
 """
-#
-# How to run:
-# > python DataTransform.py
-#
 
 import csv
 import os
+
+import argparse
 
 class DataTransform(object):	
 	'Data Transform App'
@@ -56,14 +64,11 @@ class DataTransform(object):
    		     This function takes the long-form csv file, and outputs to a wide-form file.
 
 		     params
-			* longFormFileName - the csv filename of the long form data file
-			* 
-
-		     How this function works?
-			
-			The algorithm transformaiton algorithm has two important elements in the main loop.
-
-
+			* longFormFileName - the csv filename of the long form data file.
+			* wideFormFileName - the csv filename of the output wide form data file.
+			* idColumn	   - column which contains the id to segments users.	
+			* staticColumns	   - colunms which stays the same for each row.
+			* ignoreColumns	   - columns to ignore when transforming to wide form.
 			
 		"""
 
@@ -286,21 +291,22 @@ class DataTransform(object):
 if __name__ == '__main__':
 	dt = DataTransform()
 
+	"""
 	#filename
-#	longFormFileName = 'testdata/testdata1.csv'
-#	wideFormFileName = 'testdata/testdata1_wide.csv'	
+	longFormFileName = 'testdata/testdata1.csv'
+	wideFormFileName = 'testdata/testdata1_wide.csv'	
 
 	# id column
-#	idColumn=0
+	idColumn=0
 
 	# staticColumns
-#	staticColumns=[2,3,4]
+	staticColumns=[2,3,4]
 
 	# ignoreColumns
-#	ignoreColumns=[1]
+	ignoreColumns=[1]
+	"""
 
-
-
+	"""
 	#filename
 	longFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26.csv'
 	wideFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26_wide.csv'	
@@ -313,7 +319,30 @@ if __name__ == '__main__':
 
 	# ignoreColumns
 	ignoreColumns=[]
+	"""
 
-	dt.transformLongToWideForm(longFormFileName,wideFormFileName,idColumn,staticColumns,ignoreColumns)
+	"""
+	#filename
+	longFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26.csv'
+	wideFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26_wide.csv'	
 
+	# id column
+	idColumn=0
+
+	# staticColumns
+	staticColumns=[1,2,3,4,5,6]
+
+	# ignoreColumns
+	ignoreColumns=[]
+	"""
+
+	#dt.transformLongToWideForm(longFormFileName,wideFormFileName,idColumn,staticColumns,ignoreColumns)
+
+
+	# Command line arguments
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--verbosity", help="increase output verbosity")
+	args = parser.parse_args()
+	if args.verbosity:
+	    print "verbosity turned on"
 
