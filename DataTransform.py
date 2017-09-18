@@ -15,16 +15,30 @@ Assumes that input is sorted by idColumn.
 This assumption allows for large data sets to be processed
 without loading entire file into memory for sorting.
 
-Input params:
-* longFormFileName - the csv filename of the long form data file.
-* wideFormFileName - the csv filename of the output wide form data file.
-* idColumn	   - column which contains the id to segments users.	
-* staticColumns	   - colunms which stays the same for each row.
-* ignoreColumns	   - columns to ignore when transforming to wide form.
-		
 
-How to run:
-> python DataTransform.py [] [] []
+python DataTransform.py --help
+usage: DataTransform.py [-h] -l LONGFORMFILENAME -w WIDEFORMFILENAME -u
+                        UNIQUEIDCOLUMN [-s STATICCOLUMNS [STATICCOLUMNS ...]]
+                        [-i IGNORECOLUMNS [IGNORECOLUMNS ...]] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LONGFORMFILENAME, --longFormFileName LONGFORMFILENAME
+                        Name of the long form data input file
+  -w WIDEFORMFILENAME, --wideFormFileName WIDEFORMFILENAME
+                        Name of the wide form data output file
+  -u UNIQUEIDCOLUMN, --uniqueIdColumn UNIQUEIDCOLUMN
+                        Column number that contains the unique id to identify
+                        rows
+  -s STATICCOLUMNS [STATICCOLUMNS ...], --staticColumns STATICCOLUMNS [STATICCOLUMNS ...]
+                        List of static columns. ie 2 4 5 6
+  -i IGNORECOLUMNS [IGNORECOLUMNS ...], --ignoreColumns IGNORECOLUMNS [IGNORECOLUMNS ...]
+                        List of columns to ignore. ie 2 4 5 6
+  -v, --verbose         Set output verbosity to true
+
+
+Example
+> python DataTransform.py -l testdata/testdata1.csv -w testdata/testdata1_wide.csv -u 0 -s 2 3 4 -i 1
 
 
 """
@@ -38,11 +52,13 @@ class DataTransform(object):
 	'Data Transform App'
 	pass
 
+	
 
 	"""
 	" Constructor
 	"""
-	#def __init__(self):
+	def __init__(self,verboseFlag):
+		self.verbose=verboseFlag
 	#/contructor
 
 
@@ -72,7 +88,7 @@ class DataTransform(object):
 			
 		"""
 
-		print("transformLongToWideForm("+longFormFileName+")")
+		if self.verbose: print("transformLongToWideForm("+longFormFileName+")")
 
 
 		#output file writer
@@ -90,7 +106,7 @@ class DataTransform(object):
 
 		#num columns in long format file
 		maxColumnLength = len(fileHeaders)
-		print("maxColumnLength="+str(maxColumnLength))
+		if self.verbose: print("maxColumnLength="+str(maxColumnLength))
 
 
 		currentIteration=1
@@ -118,16 +134,16 @@ class DataTransform(object):
 
 			#For each column
 			idValue = row[idColumn]
-			print("idvalue="+idValue)
+			if self.verbose: print("idvalue="+idValue)
 			
 
 			if idValue != currentId:
-				print(" new person")
+				if self.verbose: print(" new person")
 
 				# write current row data (if not empty)
 				if rowData != []:
-					print(" Write previous persons data "+str(currentIteration))
-					print(rowData)
+					if self.verbose: print(" Write previous persons data "+str(currentIteration))
+					if self.verbose: print(rowData)
 					write.writerow(rowData)
 
 				# reset row data
@@ -153,7 +169,7 @@ class DataTransform(object):
 					#print(staticItem)
 					rowData.append(row[staticItem])
 			else:
-				print(" not new person")
+				if self.verbose: print(" not new person")
 				currentIteration=currentIteration+1
 
 			# Part 2 
@@ -165,22 +181,22 @@ class DataTransform(object):
 				# check if we should ignore this row
 				#
 				if i == idColumn:
-					print("  dont output "+str(i))
+					if self.verbose: print("  dont output "+str(i))
 				elif i in staticColumns:
-					print("  dont output "+str(i))
+					if self.verbose: print("  dont output "+str(i))
 				elif i in ignoreColumns:
-					print("  dont output "+str(i))	
+					if self.verbose: print("  dont output "+str(i))	
 				else:					
 					# append item to current row
-					print("  printing "+str(i))				
+					if self.verbose: print("  printing "+str(i))				
 					rowData.append(row[i])
 
 
 
 		# write last persons row data (if not empty)
 		if rowData != []:
-			print(" Write LAST persons data "+str(currentIteration))
-			print(rowData)
+			if self.verbose: print(" Write LAST persons data "+str(currentIteration))
+			if self.verbose: print(rowData)
 			write.writerow(rowData)
 		
 		infile.close()		
@@ -193,9 +209,9 @@ class DataTransform(object):
 		wideFormHeadersString=''
 		#for value,item in wideFormHeaders:
 		for key,value in enumerate(wideFormHeaders):
-			print("key="+str(key))			
-			print("value="+value)
-			print("len(wideFormHeaders)="+str(len(wideFormHeaders)))
+			if self.verbose: print("key="+str(key))			
+			if self.verbose: print("value="+value)
+			if self.verbose: print("len(wideFormHeaders)="+str(len(wideFormHeaders)))
 			if key < (len(wideFormHeaders)-1):				
 				wideFormHeadersString = wideFormHeadersString + value + ','
 			else:
@@ -225,8 +241,8 @@ class DataTransform(object):
 	def createHeaders(self, fileHeaders,maxIteration,idColumn,staticColumns,ignoreColumns):
 		""" createHeaders()"""
 
-		print("createHeaders()")
-		print(fileHeaders)
+		if self.verbose: print("createHeaders()")
+		if self.verbose: print(fileHeaders)
 		
 		
 
@@ -251,30 +267,30 @@ class DataTransform(object):
 			itemsToRemove.append(j)
 
 
-		print(itemsToRemove)
+		if self.verbose: print(itemsToRemove)
 		itemsToRemove.sort(reverse=True)
-		print(itemsToRemove)
-
+		if self.verbose: print(itemsToRemove)
 
 		# Get remaining elements
 		elements = range(0,len(fileHeaders))
-		print(elements)
+		if self.verbose: print(elements)
+
 
 		#remove 
 		for k in itemsToRemove:
 			elements.remove(k)
-		print(elements)
+		if self.verbose: print(elements)
 
-		print("maxIteration= "+str(maxIteration))
+
+		if self.verbose: print("maxIteration= "+str(maxIteration))
 		for x in range(1,maxIteration+1):
-			print(x)
-			
+						
 			for y in elements:
 				hValue = ''+fileHeaders[y]+'_'+str(x)+''
 				rowData.append(hValue)
 			
 		# final row headers
-		print(rowData)
+		if self.verbose: print(rowData)
 
 		return rowData
 
@@ -289,60 +305,54 @@ class DataTransform(object):
 "
 """
 if __name__ == '__main__':
-	dt = DataTransform()
-
-	"""
-	#filename
-	longFormFileName = 'testdata/testdata1.csv'
-	wideFormFileName = 'testdata/testdata1_wide.csv'	
-
-	# id column
-	idColumn=0
-
-	# staticColumns
-	staticColumns=[2,3,4]
-
-	# ignoreColumns
-	ignoreColumns=[1]
-	"""
-
-	"""
-	#filename
-	longFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26.csv'
-	wideFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26_wide.csv'	
-
-	# id column
-	idColumn=0
-
-	# staticColumns
-	staticColumns=[1,2,3,4,5,6]
-
-	# ignoreColumns
-	ignoreColumns=[]
-	"""
-
-	"""
-	#filename
-	longFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26.csv'
-	wideFormFileName = 'data/Cohort_Emis-Opt_v2_2016-08-26_wide.csv'	
-
-	# id column
-	idColumn=0
-
-	# staticColumns
-	staticColumns=[1,2,3,4,5,6]
-
-	# ignoreColumns
-	ignoreColumns=[]
-	"""
-
-	#dt.transformLongToWideForm(longFormFileName,wideFormFileName,idColumn,staticColumns,ignoreColumns)
-
-
+		
 	# Command line arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--verbosity", help="increase output verbosity")
+	parser.add_argument("-l", "--longFormFileName", help="Name of the long form data input file", required=True)
+	parser.add_argument("-w", "--wideFormFileName", help="Name of the wide form data output file", required=True)
+	parser.add_argument("-u", "--uniqueIdColumn", help="Column number that contains the unique id to identify rows", type=int, required=True)
+
+	parser.add_argument('-s','--staticColumns', nargs='+', help='List of static columns. ie 2 4 5 6', type=int, default=[])
+	parser.add_argument('-i','--ignoreColumns', nargs='+', help='List of columns to ignore. ie 2 4 5 6', type=int, default=[])
+
+	parser.add_argument("-v", "--verbose", help="Set output verbosity to true", action="store_true")
 	args = parser.parse_args()
-	if args.verbosity:
-	    print "verbosity turned on"
+
+	verbose=False
+	if args.verbose: verbose=True
+	    
+	#filename
+	longFormFileName = args.longFormFileName
+	wideFormFileName = args.wideFormFileName	
+
+	# id column
+	idColumn = args.uniqueIdColumn
+
+	# staticColumns
+	staticColumns = args.staticColumns
+
+	# ignoreColumns
+	ignoreColumns = args.ignoreColumns
+
+	#print(args.staticColumns)
+	
+
+	
+	if verbose:
+		print("Verbosity turned on")
+		print(" # filename")
+		print("  longFormFileName = "+ longFormFileName)
+		print("  wideFormFileName = "+ wideFormFileName)
+		print(" # id column")
+		print("  idColumn = "+ str(idColumn))
+		print(" # staticColumns")
+		print(staticColumns)
+		print(" # ignoreColumns")
+		print(ignoreColumns)
+		print("")
+		print("")
+
+	dt = DataTransform(verbose)
+	dt.transformLongToWideForm(longFormFileName,wideFormFileName,idColumn,staticColumns,ignoreColumns)
+
 
