@@ -11,6 +11,9 @@ will now be expressed as columns in wide format.
 
 Functionality to transform to different forms might be added during the development of the application.
 
+For more information see [data transformation application](http://ayeshalshukri.co.uk/projects/data-transformation-application/)
+
+
 ## Running Instructions
 
 Example
